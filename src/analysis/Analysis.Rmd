@@ -1,0 +1,85 @@
+---
+title: 'Analysis'
+author: 
+output: 
+  github_document:
+    toc: yes
+always_allow_html: true
+editor_options: 
+  
+  chunk_output_type: console
+---
+
+```{r "setup", include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.align = "center",
+                      fig.path=('../../report/figures/'))
+library(printr)
+options(digits = 2)
+library(rmarkdown)
+```
+
+## Required Packages &amp; Reproducibility
+```{r "env", message=FALSE, warning=F}
+rm(list=ls())
+detachAllPackages <- function() {
+  
+  basic.packages <- c("package:stats","package:graphics","package:grDevices","package:utils","package:datasets","package:methods","package:base")
+  
+  package.list <- search()[ifelse(unlist(gregexpr("package:",search()))==1,TRUE,FALSE)]
+  
+  package.list <- setdiff(package.list,basic.packages)
+  
+  if (length(package.list)>0)  for (package in package.list) detach(package, character.only=TRUE)
+  
+}
+detachAllPackages()
+source(here::here("src/lib/functions.R"))
+```
+
+## Load Data
+```{r "load data", results="hide"}
+load(here("data/intermediate/cleandata.RData"))
+```
+
+## Table 1
+```{r "tab1", echo=F, message=F, warning=F, fig.width=8, fig.height=6}
+source(here("src/analysis/descriptives.R"))
+t1a #mean & stdev full data
+t1b #mean & stdev pc type
+t1c #anova
+t1c_2 #differences between pctypes
+t1d #corr
+
+rm(t1a, t1b, t1c, t1c_2, t1d)
+```
+
+## Figure 1 (H1, H2a, H2b)
+```{r "h1", echo=T, message=F, warning=F, fig.width=8, fig.height=6}
+source(here("src/analysis/OLS.R"))
+p1
+```
+
+## Figure 2
+```{r "descr-viz", echo=T, message=F, warning=F, fig.width=10, fig.height=6}
+source(here("src/analysis/descriptive_viz.R"))
+p2 + p3 + plot_layout(guides = "collect") & theme(legend.position = 'bottom')
+p4
+```
+
+## Figure 3 (H3, mediation)
+```{r "h3", echo=T, message=F, warning=F, fig.width=6, fig.height=4}
+source(here("src/analysis/mediation.R"))
+```
+```{r "show-h3", echo=F,  message=F, warning=F, fig.width=6, fig.height=4}
+knitr::include_graphics(here("report/figures", "h3-1.png"))
+```
+
+## Figure 4 (H4, moderated mediation)
+```{r "h4", echo=T, message=F, warning=F, fig.width=6, fig.height=4}
+source(here("src/analysis/moderated-mediation.R"))
+```
+```{r "show-h4", echo=F,  message=F, warning=F, fig.width=6, fig.height=4}
+knitr::include_graphics(here("report/figures", "h4-1.png"))
+```
+

@@ -1,0 +1,16 @@
+library(tidyverse)
+library(haven)
+library(here)
+library(hrbrthemes)
+library(ggstatsplot)
+library(patchwork)
+library(kableExtra)
+library(sjPlot)
+library(labelled)
+library(forestmangr)
+library(data.table)
+library(lme4)
+
+fig_cols <- yarrr::piratepal(palette = "basel", 
+                             trans = .2)
+fig_cols <- as.character(fig_cols[1:9])

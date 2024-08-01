@@ -1,0 +1,216 @@
+---
+title: 'Prepare Data'
+author: 
+output: 
+  github_document:
+    toc: yes
+always_allow_html: true
+editor_options: 
+  
+  chunk_output_type: console
+---
+
+```{r "setup", include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.align = "center",
+                      fig.path=('../../report/figures/'))
+library(printr)
+options(digits = 2)
+library(rmarkdown)
+```
+
+## Required Packages &amp; Reproducibility
+```{r "env", message=FALSE, warning=F}
+rm(list=ls())
+source(here::here("src/lib/functions.R"))
+#renv::snapshot()
+```
+
+## Tidy & Save Data
+```{r "get & clean data", results="hide"}
+d <- read_sav(here("data/raw-private/kieskompas.sav")) 
+source(here("src/data-processing/clean_data.R"))
+save(d, file = here("data/intermediate/cleandata.Rdata"))
+```
+
+## Descriptives
+```{r "contvar", echo=F, message=F, warning=F, fig.width=8, fig.height=6}
+d |> 
+  select(affpol_div,trust_index, populism_index, picom_index,
+         ap_index, selfplacement, ideology, country) |> 
+  mutate(affpol_div = affpol_div/35,
+         trust_index = trust_index/10,
+         populism_index = populism_index/5,
+         picom_index = picom_index/10,
+         ap_index = ap_index/5,
+         selfplacement = selfplacement/10,
+         ideology = ideology/7) |> 
+  pivot_longer(cols = affpol_div:ap_index) |> 
+  group_by(country, name) |> 
+  summarise(m = mean(value),
+            stdev = sd(value)) |> 
+  mutate(name = recode(name,
+         `affpol_div` = "Affective Polarization (1)",
+         `picom_index` = "Conspiracy Mentality",
+         `populism_index` = "Populist Attitudes",
+         `trust_index` = "Political Trust",
+         `ap_index` = "Affective Polarization (2)"),
+         lower = (m - 1.96*stdev),
+         upper = (m + 1.96*stdev)) |> 
+  ggplot(aes(x = m, y = name, 
+             xmin = lower, xmax = upper,
+             color = country)) +
+  geom_point(size = 2, position = position_dodge(.7)) +
+  geom_errorbar(width = 0,position = position_dodge(.7)) +
+  labs(x = "Mean Value (Standardized)", y = "") +
+  theme_ipsum() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) +
+  scale_color_manual(values = fig_cols)
+```
+
+```{r "corrplot", echo=F, message=F, warning=F, fig.width=8, fig.height=8}
+d %>%
+  filter(country == "Italy") |> 
+  select(`Affective Polarization (1)` = affpol_div,
+         `Affective Polarization (2)` = ap_index,
+         `Conspiracy Mentality` = picom_index,
+         `Populist Attitudes` = populism_index,
+         `Voted for Populist` = popu_list,
+         `Party Closeness Strength` = pid,
+         `Party Closeness` = pc,
+         `Age` = age_rec,
+         `Gender` = gender,
+         `Education` = educ,
+         `Political Trust` = trust_index,
+         `Left-Right Self-Placement` = selfplacement,
+         `Political Ideology` = ideology) %>%
+  drop_na() %>% 
+  ggcorrmat(
+  type = "robust", # correlation method
+  cor.vars = c(everything()), # a range of variables can be selected
+  colors = c(fig_cols[3], fig_cols[8], fig_cols[2]),
+  title = "Correlalogram for Variables under Study",
+  subtitle = "Italy"
+)
+
+d %>%
+  filter(country == "Poland") |> 
+  select(`Affective Polarization (1)` = affpol_div,
+         `Affective Polarization (2)` = ap_index,
+         `Conspiracy Mentality` = picom_index,
+         `Populist Attitudes` = populism_index,
+         `Voted for Populist` = popu_list,
+         `Party Closeness Strength` = pid,
+         `Party Closeness` = pc,
+         `Age` = age_rec,
+         `Gender` = gender,
+         `Education` = educ,
+         `Political Trust` = trust_index,
+         `Left-Right Self-Placement` = selfplacement,
+         `Political Ideology` = ideology) %>%
+  drop_na() %>% 
+  ggcorrmat(
+  type = "robust", # correlation method
+  cor.vars = c(everything()), # a range of variables can be selected
+  colors = c(fig_cols[3], fig_cols[8], fig_cols[2]),
+  title = "Correlalogram for Variables under Study",
+  subtitle = "Poland"
+)
+
+d %>%
+  filter(country == "Spain") |> 
+  select(`Affective Polarization (1)` = affpol_div,
+         `Affective Polarization (2)` = ap_index,
+         `Conspiracy Mentality` = picom_index,
+         `Populist Attitudes` = populism_index,
+         `Voted for Populist` = popu_list,
+         `Party Closeness Strength` = pid,
+         `Party Closeness` = pc,
+         `Age` = age_rec,
+         `Gender` = gender,
+         `Education` = educ,
+         `Political Trust` = trust_index,
+         `Left-Right Self-Placement` = selfplacement,
+         `Political Ideology` = ideology) %>%
+  drop_na() %>% 
+  ggcorrmat(
+  type = "robust", # correlation method
+  cor.vars = c(everything()), # a range of variables can be selected
+  colors = c(fig_cols[3], fig_cols[8], fig_cols[2]),
+  title = "Correlalogram for Variables under Study",
+  subtitle = "Spain"
+)
+
+d %>%
+  filter(country == "France") |> 
+  select(`Affective Polarization (1)` = affpol_div,
+         `Affective Polarization (2)` = ap_index,
+         `Conspiracy Mentality` = picom_index,
+         `Populist Attitudes` = populism_index,
+         `Voted for Populist` = popu_list,
+         `Party Closeness Strength` = pid,
+         `Party Closeness` = pc,
+         `Age` = age_rec,
+         `Gender` = gender,
+         `Education` = educ,
+         `Political Trust` = trust_index,
+         `Left-Right Self-Placement` = selfplacement,
+         `Political Ideology` = ideology) %>%
+  drop_na() %>% 
+  ggcorrmat(
+  type = "robust", # correlation method
+  cor.vars = c(everything()), # a range of variables can be selected
+  colors = c(fig_cols[3], fig_cols[8], fig_cols[2]),
+  title = "Correlalogram for Variables under Study",
+  subtitle = "France"
+)
+
+d %>%
+  filter(country == "Germany") |> 
+  select(`Affective Polarization (1)` = affpol_div,
+         `Affective Polarization (2)` = ap_index,
+         `Conspiracy Mentality` = picom_index,
+         `Populist Attitudes` = populism_index,
+         `Voted for Populist` = popu_list,
+         `Party Closeness Strength` = pid,
+         `Party Closeness` = pc,
+         `Age` = age_rec,
+         `Gender` = gender,
+         `Education` = educ,
+         `Political Trust` = trust_index,
+         `Left-Right Self-Placement` = selfplacement,
+         `Political Ideology` = ideology) %>%
+  drop_na() %>% 
+  ggcorrmat(
+  type = "robust", # correlation method
+  cor.vars = c(everything()), # a range of variables can be selected
+  colors = c(fig_cols[3], fig_cols[8], fig_cols[2]),
+  title = "Correlalogram for Variables under Study",
+  subtitle = "Germany"
+)
+
+d %>%
+  filter(country == "Sweden") |> 
+  select(`Affective Polarization (1)` = affpol_div,
+         `Affective Polarization (2)` = ap_index,
+         `Conspiracy Mentality` = picom_index,
+         `Populist Attitudes` = populism_index,
+         `Voted for Populist` = popu_list,
+         `Party Closeness Strength` = pid,
+         `Party Closeness` = pc,
+         `Age` = age_rec,
+         `Gender` = gender,
+         `Education` = educ,
+         `Political Trust` = trust_index,
+         `Left-Right Self-Placement` = selfplacement,
+         `Political Ideology` = ideology) %>%
+  drop_na() %>% 
+  ggcorrmat(
+  type = "robust", # correlation method
+  cor.vars = c(everything()), # a range of variables can be selected
+  colors = c(fig_cols[3], fig_cols[8], fig_cols[2]),
+  title = "Correlalogram for Variables under Study",
+  subtitle = "Sweden"
+)
+```
