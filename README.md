@@ -8,12 +8,12 @@ View the [draft of the paper here](report/draft.pdf). This Compendium functions 
 ## Data
 The following data files might be of interest:
 
-* [Data ](data/intermediate/cleaned_data.RData) Cleaned data with...
+* [Data ](data/intermediate/cleandata.RData) Cleaned data with all variables under study
 
-See the scripts in [src/data-processing](src/data-processing/prep_data.md) for details on how these files were constructed.
+See the scripts in [src/data-processing](src/data-processing/preparedata.md) for details on how these files were constructed.
 
 ## Results
-* [Results](src/analysis/analyses.md) Demonstrates the analyses to test and visualise ... 
+* [Results](src/analysis/Analysis.md) Demonstrates the analyses to test and visualise the paper's hypotheses 
 
 ## Code of Conduct
 Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
